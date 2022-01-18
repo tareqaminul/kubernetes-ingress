@@ -1042,7 +1042,7 @@ func (p *policiesCfg) addWAFConfig(
 		}
 	}
 
-	if waf.SecurityLog != nil {
+	if waf.SecurityLog != nil && waf.SecurityLogs == nil {
 		p.WAF.ApSecurityLogEnable = true
 
 		logConfKey := waf.SecurityLog.ApLogConf
@@ -1053,13 +1053,31 @@ func (p *policiesCfg) addWAFConfig(
 
 		if logConfPath, ok := apResources.LogConfs[logConfKey]; ok {
 			logDest := generateString(waf.SecurityLog.LogDest, "syslog:server=localhost:514")
-			p.WAF.ApLogConf = fmt.Sprintf("%s %s", logConfPath, logDest)
+			p.WAF.ApLogConf = []string{fmt.Sprintf("%s %s", logConfPath, logDest)}
 		} else {
 			res.addWarningf("WAF policy %s references an invalid or non-existing log config %s", polKey, logConfKey)
 			res.isError = true
 		}
 	}
 
+	if waf.SecurityLogs != nil {
+		p.WAF.ApSecurityLogEnable = true
+		p.WAF.ApLogConf = []string{}
+		for _, loco := range waf.SecurityLogs {
+			logConfKey := loco.ApLogConf
+			hasNamepace := strings.Contains(logConfKey, "/")
+			if !hasNamepace {
+				logConfKey = fmt.Sprintf("%v/%v", polNamespace, logConfKey)
+			}
+			if logConfPath, ok := apResources.LogConfs[logConfKey]; ok {
+				logDest := generateString(loco.LogDest, "syslog:server=localhost:514")
+				p.WAF.ApLogConf = append(p.WAF.ApLogConf, fmt.Sprintf("%s %s", logConfPath, logDest))
+			} else {
+				res.addWarningf("WAF policy %s references an invalid or non-existing log config %s", polKey, logConfKey)
+				res.isError = true
+			}
+		}
+	}
 	return res
 }
 

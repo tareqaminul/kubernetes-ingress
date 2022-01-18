@@ -2924,7 +2924,7 @@ func TestGeneratePolicies(t *testing.T) {
 					Enable:              "on",
 					ApPolicy:            "/etc/nginx/waf/nac-policies/default-dataguard-alarm",
 					ApSecurityLogEnable: true,
-					ApLogConf:           "/etc/nginx/waf/nac-logconfs/default-logconf syslog:server=127.0.0.1:514",
+					ApLogConf:           []string{"/etc/nginx/waf/nac-logconfs/default-logconf syslog:server=127.0.0.1:514"},
 				},
 			},
 			msg: "WAF reference",
@@ -8214,7 +8214,38 @@ func TestAddWafConfig(t *testing.T) {
 			wafConfig: &version2.WAF{
 				ApPolicy:            "/etc/nginx/waf/nac-policies/default-dataguard-alarm",
 				ApSecurityLogEnable: true,
-				ApLogConf:           "/etc/nginx/waf/nac-logconfs/default-logconf",
+				ApLogConf:           []string{"/etc/nginx/waf/nac-logconfs/default-logconf"},
+			},
+			expected: &validationResults{isError: false},
+			msg:      "valid waf config",
+		},
+		{
+
+			wafInput: &conf_v1.WAF{
+				Enable:   true,
+				ApPolicy: "dataguard-alarm",
+				SecurityLogs: []*conf_v1.SecurityLog{
+					{
+						Enable:    true,
+						ApLogConf: "logconf",
+						LogDest:   "syslog:server=127.0.0.1:514",
+					},
+				},
+			},
+			polKey:       "default/waf-policy",
+			polNamespace: "default",
+			apResources: &appProtectResourcesForVS{
+				Policies: map[string]string{
+					"default/dataguard-alarm": "/etc/nginx/waf/nac-policies/default-dataguard-alarm",
+				},
+				LogConfs: map[string]string{
+					"default/logconf": "/etc/nginx/waf/nac-logconfs/default-logconf",
+				},
+			},
+			wafConfig: &version2.WAF{
+				ApPolicy:            "/etc/nginx/waf/nac-policies/default-dataguard-alarm",
+				ApSecurityLogEnable: true,
+				ApLogConf:           []string{"/etc/nginx/waf/nac-logconfs/default-logconf"},
 			},
 			expected: &validationResults{isError: false},
 			msg:      "valid waf config",
@@ -8241,7 +8272,7 @@ func TestAddWafConfig(t *testing.T) {
 			wafConfig: &version2.WAF{
 				ApPolicy:            "/etc/nginx/waf/nac-policies/default-dataguard-alarm",
 				ApSecurityLogEnable: true,
-				ApLogConf:           "/etc/nginx/waf/nac-logconfs/default-logconf",
+				ApLogConf:           []string{"/etc/nginx/waf/nac-logconfs/default-logconf"},
 			},
 			expected: &validationResults{
 				isError: true,
@@ -8272,7 +8303,7 @@ func TestAddWafConfig(t *testing.T) {
 			wafConfig: &version2.WAF{
 				ApPolicy:            "/etc/nginx/waf/nac-policies/default-dataguard-alarm",
 				ApSecurityLogEnable: true,
-				ApLogConf:           "/etc/nginx/waf/nac-logconfs/default-logconf",
+				ApLogConf:           []string{"/etc/nginx/waf/nac-logconfs/default-logconf"},
 			},
 			expected: &validationResults{
 				isError: true,
@@ -8306,7 +8337,7 @@ func TestAddWafConfig(t *testing.T) {
 			wafConfig: &version2.WAF{
 				ApPolicy:            "/etc/nginx/waf/nac-policies/ns1-dataguard-alarm",
 				ApSecurityLogEnable: true,
-				ApLogConf:           "/etc/nginx/waf/nac-logconfs/ns2-logconf",
+				ApLogConf:           []string{"/etc/nginx/waf/nac-logconfs/ns2-logconf"},
 			},
 			expected: &validationResults{},
 			msg:      "valid waf config, cross ns reference",
