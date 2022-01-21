@@ -385,7 +385,6 @@ class TestAppProtectWAFPolicyVS:
         assert f'request_status="blocked"' in log_contents
         assert f'outcome="REJECTED"' in log_contents
 
-    @pytest.mark.theone
     @pytest.mark.flaky(max_runs=3)
     def test_ap_waf_policy_multi_logs(
         self,
