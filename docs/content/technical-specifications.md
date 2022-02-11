@@ -22,8 +22,7 @@ We explicitly test the NGINX Ingress Controller on a range of Kubernetes platfor
 {{% table %}}
 | NIC Version | Supported Kubernetes Version | NIC Helm Chart Version | NIC Operator Version | NGINX / NGINX Plus version |
 | --- | --- | --- | --- | --- |
-| 2.2 |  |  |  |  |
-| 2.1.0 | 1.23 - 1.19 | 0.12.0 |  | 1.21.5 / R25 |
+| 2.1.1 | 1.23 - 1.19 | 0.12.0 |  | 1.21.5 / R25 |
 | 2.0.3 | 1.22 - 1.19 | 0.11.3 |  | 1.21.3 / R25 |
 | 1.12.3 | 1.21 - 1.16 | 0.10.3 | 0.3.0 | 1.21.0 / R24 |
 | 1.11.3 | 1.20 - 1.16 | 0.9.0 | 0.2.0 | 1.21.0 / R23 P1 |
